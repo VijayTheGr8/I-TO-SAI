@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: application.name=security-practice
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+  datasource:
+    url: jdbc:mysql://localhost:3306/sss_york_gp_users?useSSL=false
+    username: app_user
+    password: AppUserPass123!
+logging:
+  level:
+    org:
+      springframework:
+        security: TRACE
