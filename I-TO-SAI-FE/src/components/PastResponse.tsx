@@ -17,9 +17,15 @@ export const PastResponse:React.FC<PastResponseProps> = ({ dayResponse }) => {
         value={`day-${dayResponse.dayIndex}`}
         className="overflow-hidden"
       >
-        <AccordionTrigger className="w-full px-4 py-3 text-right font-semibold text-gray-800 hover:bg-gray-100 transition">
-          Day {dayResponse.dayIndex}
+        <AccordionTrigger className="w-full px-4 py-3 font-semibold text-gray-800 hover:bg-gray-100 transition">
+          <div className="flex justify-between w-full items-center">
+            <span>Day {dayResponse.dayIndex}</span>
+            <span className="text-sm font-normal text-gray-500">
+              {9 - didNots.length}/9
+            </span>
+          </div>
         </AccordionTrigger>
+
 
         <AccordionContent className="bg-gray-50 px-4 pt-2 pb-4">
           {didNots.length > 0 ? (

@@ -2,7 +2,10 @@ import { useEffect, useState } from "react"
 import { PastResponse } from "./components/PastResponse";
 import { Accordion } from "@radix-ui/react-accordion";
 import { DailyReflectionCarousel } from "./components/DailyReflectionCarousel";
-
+import { Button } from "./components/ui/button";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog";
+import { CumulativeGraph } from "@/components/CumulativeGraph"; // adjust path if needed
+import { ChartColumnBig } from "lucide-react";
 export const questions = [
   "Did I take a few moments today for quiet reflection, prayer, or mindfulness?",
   "Did I engage in or encourage any form of spiritual practice or uplifting activity with my family?",
@@ -50,6 +53,7 @@ function App() {
   const [user, setUser] = useState<User | null>(null);
   const [pastResponses, setPastResponses] = useState<DayResponse[]>([]);
   const [top3MostFailed, setTop3MostFailed] = useState<FailStat[]>([]);
+  const [graphOpen, setGraphOpen] = useState(false);
 
   useEffect(() => {
     const countMap: Record<number, number> = {};
@@ -170,14 +174,21 @@ function App() {
   };
   return (
     <div className="min-h-screen bg-gray-50 font-serif min-w-80">
-      <header className="grid grid-cols-3 items-center p-4 bg-white shadow">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800 ml-5">I to SAI</h1>
+      <header className="grid grid-cols-3 items-center p-2 bg-white shadow">
+        <div className="ml-4 flex flex-col items-start">
+          <img 
+            src="/logo.jpeg" 
+            alt="I to SAI Logo" 
+            className="ml-5 h-15 w-auto object-contain" 
+          />
+          <p className="inline-block text-bold text-sm font-semibold tracking-wide">
+            [9pt Code of Conduct]
+          </p>
+
         </div>
+
         <div className="text-center">
-          {user && (
-            <span className="text-xl font-semibold text-gray-700">Sai Ram, {user.username}</span>
-          )}
+          <span className="text-xl font-semibold text-gray-700">Sai Ram{user && `, ${user.username}`}</span>
         </div>
         <nav className="flex justify-end space-x-2">
           {user ? (
@@ -189,32 +200,37 @@ function App() {
             <>
               <a
                 href="http://localhost:8080/login"
-                className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+                className="text-center self-center px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
               >Login</a>
               <a
                 href="http://localhost:8080/register"
-                className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition"
+                className="text-center self-center px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition"
               >Sign Up</a>
             </>
           )}
         </nav>
       </header>
 
-      <main>
-        <section className="px-4 py-2">
-          <div className="flex flex-col items-end justify-end text-gray-600 text-sm">
-            <div className="flex justify-end space-x-6 text-gray-600 text-sm">
-              <div>Start: {startDate.toDateString().slice(4).replace(' 2025', '')}</div>
-            </div>
+      <main className="relative z-0">
+        <div
+          className="
+              -z-10 absolute top-0 left-0 w-screen h-screen
+              bg-[url('/0.jpg')] bg-cover bg-center bg-no-repeat
+              opacity-70"
+        ></div>
+        <section className="relative h-0">
+          <div
+            className="absolute ml-4 mt-5 text-sm text-gray-700 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-md shadow z-10"
+          >
+            <div className="font-medium">Start: {startDate.toDateString().slice(4).replace(' 2025', '')}</div>
             <div>Today: {today.toDateString().slice(4).replace(' 2025', '')}</div>
             <div>Day: {dayNumber}</div>
           </div>
-          
         </section>
         {user ? (
-          <div className="mt-6 grid grid-cols-3 gap-8">
+          <div className="grid grid-cols-3 gap-8 relative z-0 w-full">
             <div className="hidden" />
-            <div className="
+            <div className="mt-5
               row-start-1
               col-start-1
               col-span-3
@@ -304,37 +320,26 @@ function App() {
                 </div>
               </div>
             </div>
-            <div className="
-              flex flex-row justify-evenly items-center
-              space-y-0
-              col-span-3
-              col-start-1
+            <div className="  
+              mt-5 w-full
 
-              [@media(min-width:1000px)]:col-span-1
-              [@media(min-width:1000px)]:col-start-3
-              [@media(min-width:1000px)]:flex-col
-              [@media(min-width:1000px)]:space-y-14
-              [@media(min-width:1000px)]:justify-start
+              flex flex-row space-y-6 space-x-25 mr-30
+
+              [@media(min-width:1000px)]:grid
+              [@media(min-width:1000px)]:grid-cols-1
+              [@media(min-width:1000px)]:grid-rows-2
+              [@media(min-width:1000px)]:space-y-0
+              [@media(min-width:1000px)]:gap-y-10
             ">
-              {/* at 684w shift areas to focus on to next row*/}
             <div
-              id="past-responses"className="
-                row-start-2 col-start-1 col-span-1 
-                [@media(min-width:1000px)]:row-start-1
-                [@media(min-width:1000px)]:col-start-3
-                [@media(min-width:1000px)]:items-end
-                [@media(min-width:1600px)]:mr-0
-
-                flex flex-col items-center w-full
-              "
+              id="past-responses" className="flex flex-col items-end w-full"
             >
             {/* <div id="past-responses" className="flex flex-col items-end col-start-3 row-start-1 w-full"> */}
               <div className="w-1/2 mr-20">
                 {pastResponses.length === 0 ? (
-                    <p className="text-gray-500">No previous entries</p>
+                    <p className="text-black text-center bg-white border border-gray-200 rounded-xl shadow font-sans">No previous entries</p>
                 ) : (
                     <>
-                      <h3 className="text-lg self-start font-semibold text-gray-700">Past Responses</h3>
                       <Accordion
                         type="single"
                         collapsible
@@ -350,20 +355,31 @@ function App() {
             </div>
             <div 
               id="areas-to-focus" 
-              // className="flex flex-col col-start-3 row-start-2 w-1/2"
-              className="
-                row-start-2 col-span-1 col-start-2
-                flex flex-col w-full
-                [@media(min-width:1000px)]:col-start-3 
-                [@media(min-width:1000px)]:items-end
-              "
+              className="flex flex-col items-end w-full"
             > 
               {pastResponses.length > 0 && top3MostFailed.length > 0 && (
                 <section className="w-2/3 mr-20">
                   <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg min-w-75">
+                    <div className="flex flex-row justify-between">
                     <h4 className="text-yellow-800 font-semibold mb-2">
-                      Areas to focus on
-                    </h4>
+                        Areas to focus on
+                      </h4>
+                      <Dialog open={graphOpen} onOpenChange={setGraphOpen}>
+                        <DialogTrigger asChild>
+                          <Button className=""><ChartColumnBig /></Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-3xl">
+                          <DialogHeader>
+                            <DialogTitle>Graph of your responses</DialogTitle>
+                            <DialogDescription>
+                              Cumulative summary of questions missed
+                            </DialogDescription>
+                          </DialogHeader>
+                          <CumulativeGraph pastResponses={pastResponses} />
+                        </DialogContent>
+                      </Dialog>
+
+                    </div>
                     <ul className="list-disc list-inside space-y-2 text-yellow-800">
                       {top3MostFailed.map((fs, idx) => (
                         <li key={idx} className="flex justify-between">
@@ -379,9 +395,24 @@ function App() {
             </div>
           </div>
         ): (
-          <p className="text-center text-gray-600">
-            Please log in or sign up to access 100 Day Daily Life Character & Conduct Reflection tracker
-          </p>
+          <div className="flex justify-center items-center px-6 py-10">
+            <div className="bg-white rounded-xl shadow-lg p-8 max-w-3xl text-center">
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">Sathya Sai Baba’s Nine Point Code of Conduct</h2>
+              <p className="text-gray-700 mb-4">
+                Bhagawan Sri Sathya Sai Baba proclaimed the Nine Point Code of Conduct as a guiding light for every devotee’s spiritual and personal development.
+              </p>
+              <blockquote className="italic text-gray-600 border-l-4 border-blue-400 pl-4 mb-4">
+                “It is the Code of Conduct which is responsible for the Organization moving forward, growing from strength to strength. The office bearers should exercise maximum care to see that the Code of Conduct is adhered to and guide others also in the right path… There should be no scramble for power or position. What matters is the purity, intensity of devotion and the spirit of self-sacrifice.”<br />
+                <span className="block mt-2 font-medium">~ Baba</span>
+              </blockquote>
+              <p className="text-gray-700 mb-6">
+                At the First Overseas Convention of Chairpersons of Sai Centers in 1998, Baba emphasized the importance of understanding and living by these principles through study circles and daily reflection.
+              </p>
+              <p className="text-lg text-indigo-600 font-semibold">
+                Please log in or sign up to access the 100-Day Daily Life Character & Conduct Reflection Tracker.
+              </p>
+            </div>
+          </div>
         )}
       </main>
     </div>
