@@ -38,7 +38,7 @@ public class UserService implements UserDetailsService {
 
     public void register(String username, String rawPassword, String email) {
         if (userRepo.findByUsername(username).isPresent() || userRepo.findByEmail(email).isPresent()) {
-            throw new IllegalArgumentException("user already exists!!1");
+            throw new IllegalArgumentException("An account with that Username or Email already exists.");
         }
         User newUser = new User();
         newUser.setUsername(username);

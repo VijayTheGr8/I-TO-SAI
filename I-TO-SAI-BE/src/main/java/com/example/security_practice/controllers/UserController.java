@@ -19,7 +19,7 @@ import java.util.Set;
 
 @RestController
 @AllArgsConstructor
-@CrossOrigin(value = "http://localhost:5174", allowCredentials = "true")
+@CrossOrigin(value = "http://localhost:5173", allowCredentials = "true")
 public class UserController {
     private final UserRepository userRepo;
     private final DayResponseRepository dayResponseRepo;

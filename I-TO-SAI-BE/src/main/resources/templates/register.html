@@ -2,34 +2,49 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>I to SAI signup</title>
+    <title>I to SAI — Sign Up</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
-<body>
-<div class="login-container">
-    <h2>Sign up to I to SAI</h2>
+<body class="auth-page">
+<div class="auth-page-grid">
+    <div class="info-panel">
+        <div class="info-card">
+            <h2 class="info-title">Sathya Sai Baba’s Nine Point Code of Conduct</h2>
+            <p>Bhagawan Sri Sathya Sai Baba proclaimed the Nine Point Code of Conduct as a guiding light for every devotee’s spiritual and personal development.</p>
+            <blockquote>
+                “It is the Code of Conduct which is responsible for the Organization moving forward, growing from strength to strength. The office bearers should exercise maximum care to see that the Code of Conduct is adhered to and guide others also in the right path… There should be no scramble for power or position. What matters is the purity, intensity of devotion and the spirit of self-sacrifice.”
+                <span class="blockquote-cite">~ Baba</span>
+            </blockquote>
+            <p class="info-footer">Please sign up to access the 100-Day Daily Life Character & Conduct Reflection Tracker.</p>
+        </div>
+    </div>
 
-    <div th:if="${error}" class="message error" th:text="${error}"></div>
+    <div class="auth-container">
+        <h2 class="auth-title">Sign Up to I to SAI</h2>
 
-    <form th:action="@{/register}" method="post">
-        <input type="hidden"
-               th:name="${_csrf.parameterName}"
-               th:value="${_csrf.token}" />
+        <div th:if="${error}" class="message error" th:text="${error}"></div>
 
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required/>
+        <form th:action="@{/register}" method="post" class="auth-form">
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}" />
 
-        <label for="email">Email:</label>
-        <input type="text" id="email" name="email" required/>
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required />
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required/>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required />
 
-        <button type="submit">Sign Up</button>
-    </form>
-    <p>Already have an account?
-        <a th:href="@{/login}">Log in here</a>
-    </p>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required />
+
+            <button type="submit" class="btn-primary">Sign Up</button>
+        </form>
+
+        <p class="auth-switch">
+            Already have an account? <a th:href="@{/login}">Log in here</a>
+        </p>
+    </div>
 </div>
 </body>
 </html>

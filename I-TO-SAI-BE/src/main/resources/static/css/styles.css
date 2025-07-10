@@ -1,89 +1,161 @@
-/* styles.css */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-body {
+body.auth-page {
   font-family: 'Segoe UI', Tahoma, sans-serif;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #fdba74 0%, #fefcbf 50%, #faf089 100%);
   color: #333;
 }
 
-.login-container {
-  background: #fff;
-  padding: 2rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+.auth-page-grid {
+  display: flex;
+  flex-wrap: wrap;
   width: 100%;
-  max-width: 360px;
-  text-align: center;
+  max-width: 900px;
+  margin: auto;
+  gap: 2rem;
+}
+@media (max-width: 768px) {
+  .auth-page-grid {
+    flex-direction: column;
+    align-items: center;
+  }
 }
 
-.login-container h2 {
+.info-panel {
+  flex: 2 1 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 350px;
+}
+
+@media (max-width: 768px) {
+  .info-panel {
+    width: 90%;
+    max-width: 500px;
+    padding: 1rem;
+  }
+}
+
+.info-card {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  max-width: 360px;
+  text-align: left;
+}
+.info-title {
+  font-size: 1.5rem;
+  color: #e76a1e;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+.info-card p {
+  margin-bottom: 1rem;
+  color: #555;
+}
+.info-card blockquote {
+  font-style: italic;
+  color: #666;
+  border-left: 4px solid #ed8936;
+  padding-left: 1rem;
+  margin-bottom: 1rem;
+}
+.blockquote-cite {
+  display: block;
+  margin-top: 0.5rem;
+  font-weight: 500;
+  color: #333;
+}
+.info-footer {
+  font-weight: 500;
+  color: #ed8936;
+}
+
+/* Right form panel */
+.auth-container {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  flex: 1 1 350px;
+  max-width: 400px;
+  max-height: 500px;
+  text-align: center;
+}
+@media (max-width: 768px) {
+  .auth-container {
+    width: 90%;
+    max-width: 400px;
+    padding: 1rem;
+  }
+}
+
+.auth-title {
   margin-bottom: 1.5rem;
   font-size: 1.75rem;
   color: #333;
+  font-weight: 600;
 }
-
-.login-container .message {
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-}
-
-.login-container .message.error {
-  color: #c53030;
-}
-
-.login-container .message.logout {
-  color: #38a169;
-}
-
-.login-container label {
+.auth-form label {
   display: block;
   text-align: left;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
   font-weight: 500;
 }
-
-.login-container input[type="text"],
-.login-container input[type="password"] {
+.auth-form input {
   width: 100%;
   padding: 0.75rem;
   margin-bottom: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 0.25rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
   transition: border-color 0.2s;
 }
-
-.login-container input[type="text"]:focus,
-.login-container input[type="password"]:focus {
-  border-color: #667eea;
+.auth-form input:focus {
+  border-color: #ed8936;
   outline: none;
 }
 
-.login-container button {
+.btn-primary {
   width: 100%;
   padding: 0.75rem;
-  background: #667eea;
+  background: linear-gradient(90deg, #f6ad55 0%, #ed8936 100%);
   border: none;
-  border-radius: 0.25rem;
+  border-radius: 0.5rem;
   color: #fff;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
+  transition: opacity 0.2s, transform 0.1s;
+}
+.btn-primary:hover {
+  opacity: 0.9;
+}
+.btn-primary:active {
+  transform: scale(0.97);
 }
 
-.login-container button:hover {
-  background: #5a67d8;
+.message {
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
 }
+.message.error { color: #c53030; }
+.message.success { color: #38a169; }
 
-.login-container button:active {
-  transform: scale(0.98);
+.auth-switch {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+.auth-switch a {
+  color: #ed8936;
+  font-weight: 500;
+  text-decoration: none;
+}
+.auth-switch a:hover {
+  text-decoration: underline;
 }

@@ -157,7 +157,7 @@ function App() {
   }
 
   const startDate = new Date(2025, 6, 13); //month is 0 indexed, don't panic
-  const today = new Date(2025, 6, 20);
+  const today = new Date(2025, 6, 19);
   const diffTime = today.getTime() - startDate.getTime();
   const dayNumber = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
@@ -173,17 +173,16 @@ function App() {
     submitDailyResponse(answerArr);
   };
   return (
-    // <div className="min-h-screen bg-gray-50 font-serif min-w-80">    
-    <div className="relative min-h-screen bg-gradient-to-br from-orange-300 via-orange-50 to-yellow-300 font-serif min-w-80 overflow-x-hidden">
-      <header className="grid grid-cols-3 items-center p-2 bg-gradient-to-br from-orange-50 via-orange-50 to-yellow-50 shadow-lg">
+    <div className="min-h-screen bg-gray-50 font-serif min-w-80">
+      <header className="grid grid-cols-3 items-center p-2 bg-white shadow">
         <div className="ml-4 flex flex-col items-start">
           <img 
-            src="/logo.png" 
+            src="/logo.jpeg" 
             alt="I to SAI Logo" 
-            className="ml-12 h-15 w-auto object-contain" 
+            className="ml-5 h-15 w-auto object-contain" 
           />
-          <p className="inline-block -mt-1 text-bold text-sm font-semibold tracking-wide">
-            [Nine Point Code of Conduct]
+          <p className="inline-block text-bold text-sm font-semibold tracking-wide">
+            [9pt Code of Conduct]
           </p>
 
         </div>
@@ -223,7 +222,7 @@ function App() {
               bg-[url('/test2.jpeg')] bg-cover bg-center bg-no-repeat
               opacity-70"
         ></div> */}
-        {user && <section className="relative h-0">
+        <section className="relative h-0">
           <div
             className="absolute ml-4 mt-5 text-sm text-gray-700 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-md shadow z-10"
           >
@@ -231,7 +230,7 @@ function App() {
             <div>Today: {today.toDateString().slice(4).replace(' 2025', '')}</div>
             <div>Day: {dayNumber}</div>
           </div>
-        </section>}
+        </section>
         {user ? (
           <div className="grid grid-cols-3 gap-8 relative z-0 w-full">
             <div className="hidden" />
@@ -246,19 +245,20 @@ function App() {
               [@media(min-width:1000px)]:items-end
               [@media(min-width:1000px)]:ml-25
 
-              [@media(min-width:1600px)]:col-start-2
-              [@media(min-width:1600px)]:col-span-1
-              [@media(min-width:1600px)]:mx-auto
+              [@media(min-width:1600px)]:col-start-1
+              [@media(min-width:1600px)]:col-span-2
+              [@media(min-width:1600px)]:items-end
+              [@media(min-width:1600px)]:ml-25
 
-          
+
               h-90 min-w-60 w-full
               flex flex-col justify-center items-center
             ">
             {/* //className="col-span-3 h-90 min-w-60 [@media(min-width:1200px)]:col-span-1 flex justify-center"> */}
-              <div className="w-full [@media(min-width:1000px)]:min-w-163 max-w-163 bg-white shadow-lg rounded-2xl p-6">
-                {/* <span className="text-xl font-semibold text-gray-700">Sai Ram{user && `, ${user.username}`}</span> */}
+              <div className="w-full max-w-163 bg-white shadow-lg rounded-2xl p-6">
+                <span className="text-xl font-semibold text-gray-700">Sai Ram{user && `, ${user.username}`}</span>
 
-                <h2 className="text-2xl font-bold text-gray-800 text-center my-3 font-serif">Sai Ram{user && `, ${user.username}`}</h2>
+                {/* <h2 className="text-2xl font-bold text-gray-800 text-center my-3 font-serif">Daily Reflection</h2> */}
                 <DailyReflectionCarousel 
                   onSlideChange={setSlideNum} />
                 <div className="w-full flex items-center justify-between mt-4">
@@ -327,40 +327,23 @@ function App() {
               </div>
             </div>
             <div className="  
-              w-full mt-5 ml-10  mr-30
+              mt-5 w-full
 
-              flex flex-row space-y-6 space-x-25
-
-              [@media(max-width:689px)]:flex-col
-              [@media(max-width:689px)]:items-center
-              [@media(max-width:689px)]:space-y-6
-              [@media(max-width:689px)]:space-x-0
-              [@media(max-width:689px)]:ml-0
-              [@media(max-width:689px)]:mr-0
+              flex flex-row space-y-6 space-x-25 mr-30
 
               [@media(min-width:1000px)]:grid
               [@media(min-width:1000px)]:grid-cols-1
               [@media(min-width:1000px)]:grid-rows-2
               [@media(min-width:1000px)]:space-y-0
               [@media(min-width:1000px)]:gap-y-10
-
-              [@media(min-width:1600px)]:col-start-3
-              [@media(min-width:1600px)]:col-span-1
             ">
             <div
-              id="past-responses" className="flex flex-col items-end w-full [@media(max-width:689px)]:ml-75"
+              id="past-responses" className="flex flex-col items-end w-full"
             >
             {/* <div id="past-responses" className="flex flex-col items-end col-start-3 row-start-1 w-full"> */}
-              <div className={`w-1/2 ${pastResponses.length === 0 ? 'mr-40': 'mr-20'}`}>
+              <div className="w-1/2 mr-20">
                 {pastResponses.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center bg-white border border-gray-200 rounded-2xl shadow-lg p-8 mt-5 space-y-4 min-w-75">
-                    <ChartColumnBig className="h-12 w-12 text-yellow-500" />
-                    <h3 className="text-xl font-semibold text-gray-800">No Reflections Yet</h3>
-                    <p className="text-gray-600 text-center max-w-xs">
-                      Once you submit your first daily reflection, it’ll show up here.  
-                      Let’s get started!
-                    </p>
-                  </div>
+                    <p className="text-black text-center bg-white border border-gray-200 rounded-xl shadow font-sans">No previous entries</p>
                 ) : (
                     <>
                       <Accordion
@@ -378,7 +361,7 @@ function App() {
             </div>
             <div 
               id="areas-to-focus" 
-              className="flex flex-col items-end w-full [@media(max-width:689px)]:ml-75"
+              className="flex flex-col items-end w-full"
             > 
               {pastResponses.length > 0 && top3MostFailed.length > 0 && (
                 <section className="w-2/3 mr-20">
@@ -389,7 +372,7 @@ function App() {
                       </h4>
                       <Dialog open={graphOpen} onOpenChange={setGraphOpen}>
                         <DialogTrigger asChild>
-                          <Button className="bg-yellow-400 hover:bg-yellow-800"><ChartColumnBig/></Button>
+                          <Button className=""><ChartColumnBig /></Button>
                         </DialogTrigger>
                         <DialogContent className="max-w-3xl">
                           <DialogHeader>
@@ -418,45 +401,26 @@ function App() {
             </div>
           </div>
         ): (
-          <div className="mt-15 flex justify-center items-center px-6 py-10">
+          <div className="flex justify-center items-center px-6 py-10">
             <div className="bg-white rounded-xl shadow-lg p-8 max-w-3xl text-center">
               <h2 className="text-2xl font-bold text-gray-800 mb-4">Sathya Sai Baba’s Nine Point Code of Conduct</h2>
               <p className="text-gray-700 mb-4">
                 Bhagawan Sri Sathya Sai Baba proclaimed the Nine Point Code of Conduct as a guiding light for every devotee’s spiritual and personal development.
               </p>
-              <blockquote className="italic text-gray-600 border-l-4 border-orange-400 pl-4 mb-4">
+              <blockquote className="italic text-gray-600 border-l-4 border-blue-400 pl-4 mb-4">
                 “It is the Code of Conduct which is responsible for the Organization moving forward, growing from strength to strength. The office bearers should exercise maximum care to see that the Code of Conduct is adhered to and guide others also in the right path… There should be no scramble for power or position. What matters is the purity, intensity of devotion and the spirit of self-sacrifice.”<br />
                 <span className="block mt-2 font-medium">~ Baba</span>
               </blockquote>
-              {/* <p className="text-gray-700 mb-6">
+              <p className="text-gray-700 mb-6">
                 At the First Overseas Convention of Chairpersons of Sai Centers in 1998, Baba emphasized the importance of understanding and living by these principles through study circles and daily reflection.
-              </p> */}
-              <p className="text-lg text-orange-400 font-semibold">
+              </p>
+              <p className="text-lg text-indigo-600 font-semibold">
                 Please log in or sign up to access the 100-Day Daily Life Character & Conduct Reflection Tracker.
               </p>
             </div>
           </div>
         )}
       </main>
-      <footer 
-        className={`
-          w-full
-          py-6
-          bg-gradient-to-r from-orange-400 via-orange-300 to-orange-400
-          text-white text-center shadow-xl
-          ${(!user || pastResponses.length === 0)
-            ? 'absolute bottom-0 left-0'
-            : 'mt-5'}
-        `}>
-        <div className="flex flex-col font-extrabold items-center justify-center">
-          <p className="text-sm">
-            I to SAI © {new Date().getFullYear()}
-          </p>
-          <p>
-            • Sri Sathya Sai Baba Centre of Toronto York •
-          </p>
-      </div>
-      </footer>
     </div>
   );
 }

@@ -2,45 +2,61 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>I to SAI login</title>
+    <title>I to SAI — Log In</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
-<body>
-<div class="login-container">
-    <h2>Log in to I to SAI</h2>
-
-    <div th:if="${param.error}" class="message error">
-        Invalid username/email or password.
-    </div>
-    <div th:if="${param.logout}" class="message logout">
-        You have been logged out.
-    </div>
-
-    <form th:action="@{/perform_login}" th:method="post">
-        <input type="hidden"
-               th:name="${_csrf.parameterName}"
-               th:value="${_csrf.token}" />
-
-        <label for="usernameOrEmail">Username/Email:</label>
-        <input type="text" id="usernameOrEmail"
-               name="usernameOrEmail"
-               placeholder="Your username or Email" required />
-
-        <label for="password">Password:</label>
-        <input type="password" id="password"
-               name="password"
-               placeholder="Your password" required />
-
-        <button type="submit">Log in</button>
-    </form>
-    <p>Don’t have an account?
-        <a th:href="@{/register}">Register here</a>
-    </p>
-
-    <div th:if="${param.registered}" class="message logout">
-        Registration successful—please log in.
+<body class="auth-page">
+<div class="auth-page-grid">
+    <div class="info-panel">
+        <div class="info-card">
+            <h2 class="info-title">Sathya Sai Baba’s Nine Point Code of Conduct</h2>
+            <p>Bhagawan Sri Sathya Sai Baba proclaimed the Nine Point Code of Conduct as a guiding light for every devotee’s spiritual and personal development.</p>
+            <blockquote>
+                “It is the Code of Conduct which is responsible for the Organization moving forward, growing from strength to strength. The office bearers should exercise maximum care to see that the Code of Conduct is adhered to and guide others also in the right path… There should be no scramble for power or position. What matters is the purity, intensity of devotion and the spirit of self-sacrifice.”
+                <span class="blockquote-cite">~ Baba</span>
+            </blockquote>
+            <p class="info-footer">Please log in to access the 100-Day Daily Life Character & Conduct Reflection Tracker.</p>
+        </div>
     </div>
 
+    <div class="auth-container" style="max-height: 400px">
+        <h2 class="auth-title">Log In to I to SAI</h2>
+
+        <div th:if="${param.error}" class="message error">
+            Invalid username/email or password.
+        </div>
+        <div th:if="${param.logout}" class="message success">
+            You have been logged out.
+        </div>
+
+        <form th:action="@{/perform_login}" th:method="post" class="auth-form">
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}" />
+
+            <label for="usernameOrEmail">Username or Email</label>
+            <input type="text" id="usernameOrEmail"
+                   name="usernameOrEmail"
+                   placeholder="Your username or email"
+                   required />
+
+            <label for="password">Password</label>
+            <input type="password" id="password"
+                   name="password"
+                   placeholder="Your password"
+                   required />
+
+            <button type="submit" class="btn-primary">Log In</button>
+        </form>
+
+        <p class="auth-switch">
+            Don’t have an account? <a th:href="@{/register}">Register here</a>
+        </p>
+
+        <div th:if="${param.registered}" class="message success">
+            Registration successful—please log in.
+        </div>
+    </div>
 </div>
 </body>
 </html>
