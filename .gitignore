@@ -1,0 +1,5 @@
+I-TO-SAI-BE/src/main/resources/application.yml
+.env
+I-TO-SAI-BE/target/
+I-TO-SAI-FE/node_modules/
+docker-compose.override.yml

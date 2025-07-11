@@ -22,7 +22,8 @@ import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(value = "http://localhost:5173", allowCredentials = "true")
+@RequestMapping("/api")
+//@CrossOrigin(value = "http://localhost:5173", allowCredentials = "true") //commented out since we are getting NGINX to proxy both FE and BE through the same host:port
 public class UserController {
     private final UserRepository userRepo;
     private final DayResponseRepository dayResponseRepo;
@@ -40,8 +41,6 @@ public class UserController {
     @PostMapping("/submitDailyResponse")
     public ResponseEntity<?> submitDailyResponse(@AuthenticationPrincipal UserDetails principal,
                                   @RequestBody DayResponseDTO dto) {
-        System.out.println("dto");
-        System.out.print(dto);
         User user = userRepo.findByUsername(principal.getUsername()).orElseThrow();
 
         if (dayResponseRepo.findByUserAndDayIndex(user, dto.dayIndex()).isPresent()) {

@@ -20,14 +20,15 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, UserService userService) throws Exception {
         return http
                 .cors(Customizer.withDefaults())
-                .csrf(csrf->csrf.ignoringRequestMatchers("/submitDailyResponse"))
+                .csrf(csrf->csrf.ignoringRequestMatchers("/api/submitDailyResponse"))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/css/**", "/js/**", "/register").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/perform_login")
-                        .defaultSuccessUrl("http://localhost:5173", true)
+                        .defaultSuccessUrl("/", true)
+//                        .defaultSuccessUrl("http://localhost:5173", true)
                         .failureUrl("/login?error")
                         .usernameParameter("usernameOrEmail")
                         .passwordParameter("password")

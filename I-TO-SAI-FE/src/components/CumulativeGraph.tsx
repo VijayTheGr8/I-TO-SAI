@@ -75,7 +75,7 @@ export const CumulativeGraph = ({ pastResponses }: Props) => {
               formatter={(value: number) => value.toFixed(2)}
               labelFormatter={(label) => label}
             />
-            <Bar dataKey="Score" name={`Avg (${windowSize})`} />
+            <Bar fill="#fb923c" dataKey="Score" name={`Avg (${windowSize})`} />
           </BarChart>
         </ResponsiveContainer>
       </div>

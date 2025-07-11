@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react"
-import { PastResponse } from "./components/PastResponse";
-import { Accordion } from "@radix-ui/react-accordion";
 import { DailyReflectionCarousel } from "./components/DailyReflectionCarousel";
 import { Button } from "./components/ui/button";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { CumulativeGraph } from "@/components/CumulativeGraph"; // adjust path if needed
 import { ChartColumnBig } from "lucide-react";
 import { ATFSuggestionDialog } from "./components/ATFSuggestionDialog";
+import { PastResponsesSection } from "./components/PastResponsesSection";
 export const questions = [
   "Did I take a few moments today for quiet reflection, prayer, or mindfulness?",
   "Did I engage in or encourage any form of spiritual practice or uplifting activity with my family?",
@@ -88,7 +87,7 @@ function App() {
       answers
     };
     
-    fetch("http://localhost:8080/submitDailyResponse", {
+    fetch("http://localhost/api/submitDailyResponse", {
       method: "POST",
       credentials: "include",                 // send the JSESSIONID cookie
       headers: {
@@ -98,7 +97,6 @@ function App() {
     })
     .then(async res => {
       const result = await res.text();
-      console.log(result) 
       if (result === "success") {
         setSubmittedToday(true);
         getAllUserDailyResponses();
@@ -115,7 +113,7 @@ function App() {
 
   const [submittedToday, setSubmittedToday] = useState(false);
   const getAllUserDailyResponses = () => {
-    fetch("http://localhost:8080/viewResponsesForUser", {
+    fetch("http://localhost/api/viewResponsesForUser", {
       credentials: "include"
     })
     .then(res => {
@@ -138,7 +136,6 @@ function App() {
           map[ans.questionNumber] = ans.answer;
         });
         setAnswersMap(map);
-        console.log(map)
       }
     })
     .catch(err => {
@@ -147,7 +144,7 @@ function App() {
   }
 
   const getUserDetails = () => {
-    fetch("http://localhost:8080/getUserDetails", {
+    fetch("http://localhost/api/getUserDetails", {
       credentials: "include"
     })
       .then(res => {
@@ -159,7 +156,7 @@ function App() {
   }
 
   const startDate = new Date(2025, 6, 13); //month is 0 indexed, don't panic
-  const today = new Date();
+  const today = new Date(2025, 9, 20);
   const diffTime = today.getTime() - startDate.getTime();
   const dayNumber = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
@@ -176,9 +173,7 @@ function App() {
   };
 
   return (
-    // <div className="min-h-screen bg-gray-50 font-serif min-w-80">    
     <div className="relative min-h-screen flex flex-col bg-gradient-to-br from-orange-300 via-orange-50 to-yellow-300 font-sans min-w-80 overflow-x-hidden">
-    {/* <div className="relative min-h-screen bg-gradient-to-br from-orange-300 via-orange-50 to-yellow-300 font-serif min-w-80 overflow-x-hidden"> */}
       <header className="grid grid-cols-4 items-center p-2 bg-gradient-to-br from-orange-50 via-orange-50 to-yellow-50 shadow-lg">
         <div className="flex items-center">
           <img 
@@ -208,7 +203,7 @@ function App() {
         <nav className="flex justify-end space-x-2">
           {user ? (
             <a
-              href="http://localhost:8080/perform_logout"
+              href="http://localhost/perform_logout"
               className="px-4 py-2 bg-red-500 text-white rounded-xl font-semibold hover:bg-red-600 transition shadow-md"
             >
               Logout
@@ -216,13 +211,13 @@ function App() {
           ) : (
             <div className="flex flex-col space-y-2 items-end">
               <a
-                href="http://localhost:8080/register"
+                href="http://localhost/register"
                 className="text-center px-4 py-2 rounded-xl font-semibold text-white bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 transition shadow-md"
               >
                 Sign Up
               </a>
               <a
-                href="http://localhost:8080/login"
+                href="http://localhost/login"
                 className="text-center px-4 py-2 rounded-xl font-semibold text-white bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 transition shadow-md"
               >
                 Login
@@ -234,12 +229,6 @@ function App() {
       </header>
 
       <main className="flex-grow relative z-0">
-        {/* <div
-          className="
-              -z-10 absolute top-0 left-0 w-screen h-screen
-              bg-[url('/test2.jpeg')] bg-cover bg-center bg-no-repeat
-              opacity-70"
-        ></div> */}
         {user && <section className="relative h-0">
           <div
             className="absolute ml-4 mt-5 text-sm text-gray-700 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-md shadow z-10 opacity-80"
@@ -250,31 +239,41 @@ function App() {
           </div>
         </section>}
         {user ? (
-          <div className="grid grid-cols-3 gap-8 relative z-0 w-full">
-            <div className="hidden" />
-            <div className="mt-5
-              row-start-1
-              col-start-1
-              col-span-3
-              justify-self-center
+          <div className="grid grid-cols-3 [@media(max-width:1425px)]:grid-cols-2 gap-8 relative z-0 w-full">
+            <div id="past-responses" 
+              className="
+                flex flex-col items-center w-full
 
-              [@media(min-width:1130px)]:col-start-1
-              [@media(min-width:1130px)]:col-span-2
-              [@media(min-width:1130px)]:items-end
-              [@media(min-width:1130px)]:ml-25
+                [@media(max-width:700px)]:col-start-1
+                [@media(max-width:700px)]:col-span-2
+                [@media(max-width:700px)]:row-start-3
+                
+                [@media(min-width:1425px)]:mt-4 
 
-              [@media(min-width:1600px)]:col-start-2
-              [@media(min-width:1600px)]:col-span-1
-              [@media(min-width:1600px)]:mx-auto
+                [@media(max-width:1425px)]:mt-0                 
+                [@media(max-width:1425px)]:row-start-2
+                [@media(max-width:1425px)]:col-start-1
+                [@media(max-width:1425px)]:items-center
+                "
+            >
+              <PastResponsesSection pastResponses={pastResponses} />
+            </div>
 
-          
-              h-90 min-w-60 w-full
-              flex flex-col justify-center items-center
-            ">
-            {/* //className="col-span-3 h-90 min-w-60 [@media(min-width:1200px)]:col-span-1 flex justify-center"> */}
+
+            <div id="daily-reflection-form" 
+              className="
+                mt-5 h-90 min-w-60 w-full
+                row-start-1
+                col-start-2
+                col-span-1
+                justify-self-center
+                flex flex-col justify-center items-center
+
+                [@media(max-width:1425px)]:col-start-1
+                [@media(max-width:1425px)]:col-span-2
+                "
+            >
               <div className="w-full [@media(min-width:1130px)]:min-w-163 max-w-163 bg-white shadow-lg rounded-2xl p-6">
-                {/* <span className="text-xl font-semibold text-gray-700">Sai Ram{user && `, ${user.username}`}</span> */}
-
                 <h2 className="text-2xl font-bold text-gray-800 text-center my-3 font-sans">Sai Ram{user && `, ${user.username}`}</h2>
                 <DailyReflectionCarousel 
                   onSlideChange={setSlideNum} />
@@ -343,65 +342,33 @@ function App() {
                 </div>
               </div>
             </div>
-            <div className="  
-              w-full ml-10 mr-30
 
-              flex flex-row space-y-6 space-x-25
-
-              [@media(max-width:689px)]:flex-col
-              [@media(max-width:689px)]:items-center
-              [@media(max-width:689px)]:space-y-6
-              [@media(max-width:689px)]:space-x-0
-              [@media(max-width:689px)]:ml-0
-              [@media(max-width:689px)]:mr-0
-
-              [@media(min-width:1130px)]:grid
-              [@media(min-width:1130px)]:grid-cols-1
-              [@media(min-width:1130px)]:grid-rows-2
-              [@media(min-width:1130px)]:space-y-0
-              [@media(min-width:1130px)]:gap-y-10
-
-              [@media(min-width:1600px)]:col-start-3
-              [@media(min-width:1600px)]:col-span-1
-            ">
-            <div
-              id="past-responses" className="flex flex-col [@media(min-width:1000px)]:mt-5 [@media(max-width:1325px)]:items-center items-end w-full [@media(max-width:689px)]:ml-50"
-            >
-            {/* <div id="past-responses" className="flex flex-col items-end col-start-3 row-start-1 w-full"> */}
-              <div className={`w-1/2 ${pastResponses.length === 0 ? 'mr-40': 'mr-20'}`}>
-                {pastResponses.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center bg-white border border-gray-200 rounded-2xl shadow-lg p-8 mt-5 space-y-4 min-w-75">
-                    <ChartColumnBig className="h-12 w-12 text-yellow-500" />
-                    <h3 className="text-xl font-semibold text-gray-800">No Reflections Yet</h3>
-                    <p className="text-gray-600 text-center max-w-xs">
-                      Once you submit your first daily reflection, it’ll show up here.  
-                      Let’s get started!
-                    </p>
-                  </div>
-                ) : (
-                    <>
-                      <Accordion
-                        type="single"
-                        collapsible
-                        className="w-full max-w-md min-w-55 [@media(min-width:1200px)]:mx-auto my-2 bg-white border border-gray-200 rounded-xl shadow font-sans"
-                      >
-                        {pastResponses.map((dr) => (
-                            <PastResponse key={dr.dayIndex} dayResponse={dr}/>
-                        ))}  
-                      </Accordion>
-                    </>
-                    )}
-              </div>
-            </div>
             <div 
-              id="areas-to-focus" 
-              className="flex flex-col [@media(max-width:1325px)]:items-start items-end w-full [@media(max-width:689px)]:ml-20"
+              id="areas-to-focus"  
+              className="
+              flex flex-col items-center w-full mt-5 
+              
+              [@media(max-width:1725px)]:ml-15 
+              
+              [@media(max-width:1425px)]:row-start-2
+              [@media(max-width:1425px)]:col-start-2
+              [@media(max-width:1425px)]:items-center
+              [@media(max-width:1425px)]:ml-0
+
+              [@media(max-width:900px)]:items-start
+              [@media(max-width:900px)]:ml-5 
+
+              [@media(max-width:700px)]:col-start-1
+              [@media(max-width:700px)]:col-span-2
+              [@media(max-width:700px)]:ml-0
+              [@media(max-width:700px)]:!items-center
+              "
             > 
               {pastResponses.length > 0 && top3MostFailed.length > 0 && (
                 <section className="w-2/3 mr-20">
                   <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg min-w-75">
-                    <div className="flex flex-row justify-between">
-                    <h4 className="text-yellow-800 font-semibold mb-2">
+                    <div className="flex flex-row justify-between mb-3">
+                    <h4 className="text-yellow-800 font-semibold">
                         Areas to focus on
                       </h4>
                       <Dialog open={graphOpen} onOpenChange={setGraphOpen}>
@@ -457,8 +424,7 @@ function App() {
                   </div>
                 </section>
                 )}
-            </div>
-            </div>
+              </div>
           </div>
         ): (
           <div className="mt-5 mb-20 flex justify-center items-center px-6 py-10">

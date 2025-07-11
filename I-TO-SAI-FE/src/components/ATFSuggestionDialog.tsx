@@ -29,7 +29,7 @@ export function ATFSuggestionDialog({ struggle, open, onOpenChange }: Props) {
     setSuggestion(null);
 
     fetch(
-      `http://localhost:8080/getATFSuggestion?struggle=${encodeURIComponent(struggle)}&reason=${encodeURIComponent(reason)}`,
+      `http://localhost/api/getATFSuggestion?struggle=${encodeURIComponent(struggle)}&reason=${encodeURIComponent(reason)}`,
       { credentials: "include" }
     )
       .then((res) => {
