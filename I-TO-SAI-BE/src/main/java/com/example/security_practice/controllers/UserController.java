@@ -7,8 +7,11 @@ import com.example.security_practice.entities.User;
 import com.example.security_practice.dtos.UserDTO;
 import com.example.security_practice.repositories.DayResponseRepository;
 import com.example.security_practice.repositories.UserRepository;
+import com.example.security_practice.services.AIService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -18,11 +21,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @CrossOrigin(value = "http://localhost:5173", allowCredentials = "true")
 public class UserController {
     private final UserRepository userRepo;
     private final DayResponseRepository dayResponseRepo;
+    private final AIService aiService;
 
     @GetMapping("/getUserDetails")
     public ResponseEntity<?> getUserDetails(@AuthenticationPrincipal UserDetails principal) {
@@ -66,5 +70,11 @@ public class UserController {
         var u = userRepo.findByUsername(principal.getUsername()).orElseThrow();
         var responses = dayResponseRepo.findAllByUserWithAnswers(u);
         return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/getATFSuggestion")
+    @PreAuthorize("hasRole('USER')")
+    public String getATFSuggestion(@RequestParam("struggle") String struggle, @RequestParam("reason") String reason) {
+        return aiService.getATFSuggestion(struggle, reason).orElseThrow(() -> new IllegalStateException("oai api fetch failed. check if outage or request\nstruggle:"+struggle+"\nreason: "+reason));
     }
 }

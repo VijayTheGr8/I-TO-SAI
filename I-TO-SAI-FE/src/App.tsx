@@ -3,9 +3,10 @@ import { PastResponse } from "./components/PastResponse";
 import { Accordion } from "@radix-ui/react-accordion";
 import { DailyReflectionCarousel } from "./components/DailyReflectionCarousel";
 import { Button } from "./components/ui/button";
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { CumulativeGraph } from "@/components/CumulativeGraph"; // adjust path if needed
 import { ChartColumnBig } from "lucide-react";
+import { ATFSuggestionDialog } from "./components/ATFSuggestionDialog";
 export const questions = [
   "Did I take a few moments today for quiet reflection, prayer, or mindfulness?",
   "Did I engage in or encourage any form of spiritual practice or uplifting activity with my family?",
@@ -53,6 +54,7 @@ function App() {
   const [user, setUser] = useState<User | null>(null);
   const [pastResponses, setPastResponses] = useState<DayResponse[]>([]);
   const [top3MostFailed, setTop3MostFailed] = useState<FailStat[]>([]);
+  const [openDialogIndex, setOpenDialogIndex] = useState<number | null>(null);
   const [graphOpen, setGraphOpen] = useState(false);
 
   useEffect(() => {
@@ -157,7 +159,7 @@ function App() {
   }
 
   const startDate = new Date(2025, 6, 13); //month is 0 indexed, don't panic
-  const today = new Date(2025, 6, 20);
+  const today = new Date();
   const diffTime = today.getTime() - startDate.getTime();
   const dayNumber = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
@@ -172,51 +174,66 @@ function App() {
     const answerArr = Object.entries(answersMap).map(([qNum, ans]) => ({questionNumber: Number(qNum), answer: ans}));
     submitDailyResponse(answerArr);
   };
+
   return (
     // <div className="min-h-screen bg-gray-50 font-serif min-w-80">    
-    <div className="relative min-h-screen bg-gradient-to-br from-orange-300 via-orange-50 to-yellow-300 font-serif min-w-80 overflow-x-hidden">
-      <header className="grid grid-cols-3 items-center p-2 bg-gradient-to-br from-orange-50 via-orange-50 to-yellow-50 shadow-lg">
-        <div className="ml-4 flex flex-col items-start">
+    <div className="relative min-h-screen flex flex-col bg-gradient-to-br from-orange-300 via-orange-50 to-yellow-300 font-sans min-w-80 overflow-x-hidden">
+    {/* <div className="relative min-h-screen bg-gradient-to-br from-orange-300 via-orange-50 to-yellow-300 font-serif min-w-80 overflow-x-hidden"> */}
+      <header className="grid grid-cols-4 items-center p-2 bg-gradient-to-br from-orange-50 via-orange-50 to-yellow-50 shadow-lg">
+        <div className="flex items-center">
           <img 
-            src="/logo.png" 
-            alt="I to SAI Logo" 
-            className="ml-12 h-15 w-auto object-contain" 
+            src="/logo2.png" 
+            alt="York Logo" 
+            className="h-30 w-auto object-contain" 
           />
-          <p className="inline-block -mt-1 text-bold text-sm font-semibold tracking-wide">
-            [Nine Point Code of Conduct]
-          </p>
-
         </div>
-
         <div className="flex items-center justify-center text-center">
           <img 
             src="/1.png" 
             alt="I to SAI Logo" 
-            className="ml-5 h-20 w-auto object-contain" 
+            className="h-20 w-auto object-contain" 
           />
         </div>
+        <div className="ml-4 flex flex-col items-start">
+          <img 
+            src="/logo.png" 
+            alt="SAI100 Logo" 
+            className="h-15 w-auto object-contain" 
+          />
+          {/* <p className="whitespace-nowrap inline-block -mt-1 -ml-12 text-bold text-sm font-semibold ">
+            [Nine Point Code of Conduct]
+          </p> */}
+        </div>
+
         <nav className="flex justify-end space-x-2">
           {user ? (
             <a
               href="http://localhost:8080/perform_logout"
-              className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition font-sans"
-            >Logout</a>
+              className="px-4 py-2 bg-red-500 text-white rounded-xl font-semibold hover:bg-red-600 transition shadow-md"
+            >
+              Logout
+            </a>
           ) : (
-            <>
-              <a
-                href="http://localhost:8080/login"
-                className="text-center self-center px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-              >Login</a>
+            <div className="flex flex-col space-y-2 items-end">
               <a
                 href="http://localhost:8080/register"
-                className="text-center self-center px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition"
-              >Sign Up</a>
-            </>
+                className="text-center px-4 py-2 rounded-xl font-semibold text-white bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 transition shadow-md"
+              >
+                Sign Up
+              </a>
+              <a
+                href="http://localhost:8080/login"
+                className="text-center px-4 py-2 rounded-xl font-semibold text-white bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 transition shadow-md"
+              >
+                Login
+              </a>
+            </div>
           )}
         </nav>
+
       </header>
 
-      <main className="relative z-0">
+      <main className="flex-grow relative z-0">
         {/* <div
           className="
               -z-10 absolute top-0 left-0 w-screen h-screen
@@ -225,7 +242,7 @@ function App() {
         ></div> */}
         {user && <section className="relative h-0">
           <div
-            className="absolute ml-4 mt-5 text-sm text-gray-700 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-md shadow z-10"
+            className="absolute ml-4 mt-5 text-sm text-gray-700 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-md shadow z-10 opacity-80"
           >
             <div className="font-medium">Start: {startDate.toDateString().slice(4).replace(' 2025', '')}</div>
             <div>Today: {today.toDateString().slice(4).replace(' 2025', '')}</div>
@@ -241,10 +258,10 @@ function App() {
               col-span-3
               justify-self-center
 
-              [@media(min-width:1000px)]:col-start-1
-              [@media(min-width:1000px)]:col-span-2
-              [@media(min-width:1000px)]:items-end
-              [@media(min-width:1000px)]:ml-25
+              [@media(min-width:1130px)]:col-start-1
+              [@media(min-width:1130px)]:col-span-2
+              [@media(min-width:1130px)]:items-end
+              [@media(min-width:1130px)]:ml-25
 
               [@media(min-width:1600px)]:col-start-2
               [@media(min-width:1600px)]:col-span-1
@@ -255,10 +272,10 @@ function App() {
               flex flex-col justify-center items-center
             ">
             {/* //className="col-span-3 h-90 min-w-60 [@media(min-width:1200px)]:col-span-1 flex justify-center"> */}
-              <div className="w-full [@media(min-width:1000px)]:min-w-163 max-w-163 bg-white shadow-lg rounded-2xl p-6">
+              <div className="w-full [@media(min-width:1130px)]:min-w-163 max-w-163 bg-white shadow-lg rounded-2xl p-6">
                 {/* <span className="text-xl font-semibold text-gray-700">Sai Ram{user && `, ${user.username}`}</span> */}
 
-                <h2 className="text-2xl font-bold text-gray-800 text-center my-3 font-serif">Sai Ram{user && `, ${user.username}`}</h2>
+                <h2 className="text-2xl font-bold text-gray-800 text-center my-3 font-sans">Sai Ram{user && `, ${user.username}`}</h2>
                 <DailyReflectionCarousel 
                   onSlideChange={setSlideNum} />
                 <div className="w-full flex items-center justify-between mt-4">
@@ -327,7 +344,7 @@ function App() {
               </div>
             </div>
             <div className="  
-              w-full mt-5 ml-10  mr-30
+              w-full ml-10 mr-30
 
               flex flex-row space-y-6 space-x-25
 
@@ -338,17 +355,17 @@ function App() {
               [@media(max-width:689px)]:ml-0
               [@media(max-width:689px)]:mr-0
 
-              [@media(min-width:1000px)]:grid
-              [@media(min-width:1000px)]:grid-cols-1
-              [@media(min-width:1000px)]:grid-rows-2
-              [@media(min-width:1000px)]:space-y-0
-              [@media(min-width:1000px)]:gap-y-10
+              [@media(min-width:1130px)]:grid
+              [@media(min-width:1130px)]:grid-cols-1
+              [@media(min-width:1130px)]:grid-rows-2
+              [@media(min-width:1130px)]:space-y-0
+              [@media(min-width:1130px)]:gap-y-10
 
               [@media(min-width:1600px)]:col-start-3
               [@media(min-width:1600px)]:col-span-1
             ">
             <div
-              id="past-responses" className="flex flex-col items-end w-full [@media(max-width:689px)]:ml-75"
+              id="past-responses" className="flex flex-col [@media(min-width:1000px)]:mt-5 [@media(max-width:1325px)]:items-center items-end w-full [@media(max-width:689px)]:ml-50"
             >
             {/* <div id="past-responses" className="flex flex-col items-end col-start-3 row-start-1 w-full"> */}
               <div className={`w-1/2 ${pastResponses.length === 0 ? 'mr-40': 'mr-20'}`}>
@@ -378,7 +395,7 @@ function App() {
             </div>
             <div 
               id="areas-to-focus" 
-              className="flex flex-col items-end w-full [@media(max-width:689px)]:ml-75"
+              className="flex flex-col [@media(max-width:1325px)]:items-start items-end w-full [@media(max-width:689px)]:ml-20"
             > 
               {pastResponses.length > 0 && top3MostFailed.length > 0 && (
                 <section className="w-2/3 mr-20">
@@ -403,11 +420,37 @@ function App() {
                       </Dialog>
 
                     </div>
-                    <ul className="list-disc list-inside space-y-2 text-yellow-800">
+                    <ul className="list-none list-inside space-y-2 text-yellow-800">
                       {top3MostFailed.map((fs, idx) => (
-                        <li key={idx} className="flex justify-between">
-                          <span>{fs.fail}</span>
-                          <span className="font-semibold">{fs.count}x</span>
+                        <li key={idx}>
+                          <button
+                            onClick={() => setOpenDialogIndex(idx)}
+                            className="
+                              w-full text-left
+                              flex justify-between items-center
+                              px-4 py-2
+                              rounded-lg
+                              bg-yellow-50
+                              hover:bg-yellow-100
+                              active:bg-yellow-200
+                              transition duration-200
+                              border border-yellow-300
+                              shadow-sm
+                              cursor-pointer
+                            "
+                          >
+                            <span className="text-sm">{fs.fail}</span>
+                            <span className="font-semibold text-yellow-900">{fs.count}x</span>
+                          </button>
+                            {openDialogIndex === idx && (
+                              <ATFSuggestionDialog
+                                struggle={fs.fail}
+                                open={true}
+                                onOpenChange={(open) => {
+                                  if (!open) setOpenDialogIndex(null);
+                            }}
+                            />
+                          )}
                         </li>
                       ))}
                     </ul>
@@ -418,7 +461,7 @@ function App() {
             </div>
           </div>
         ): (
-          <div className="mt-15 flex justify-center items-center px-6 py-10">
+          <div className="mt-5 mb-20 flex justify-center items-center px-6 py-10">
             <div className="bg-white rounded-xl shadow-lg p-8 max-w-3xl text-center">
               <h2 className="text-2xl font-bold text-gray-800 mb-4">Sathya Sai Baba’s Nine Point Code of Conduct</h2>
               <p className="text-gray-700 mb-4">
