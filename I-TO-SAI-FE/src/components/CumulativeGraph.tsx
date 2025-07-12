@@ -1,3 +1,4 @@
+import type { DayResponse } from "@/App";
 import { useState, useMemo } from "react";
 import {
   BarChart,
@@ -8,16 +9,14 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import type { DayResponse } from "@/App";
 
 interface Props {
-  pastResponses: DayResponse[]; // assume length ≥ 1, each with 9 answers
+  pastResponses: DayResponse[]; 
 }
 
 export const CumulativeGraph = ({ pastResponses }: Props) => {
   const [windowSize, setWindowSize] = useState(1);
 
-  // 1) raw daily scores:
   const dailyScores = useMemo(
     () =>
       pastResponses.map((resp) =>
@@ -26,7 +25,6 @@ export const CumulativeGraph = ({ pastResponses }: Props) => {
     [pastResponses]
   );
 
-  // 2) chunk into windows of length `windowSize`:
   const data = useMemo(() => {
     const chunks: { name: string; Score: number }[] = [];
     for (let i = 0; i < dailyScores.length; i += windowSize) {
@@ -43,7 +41,6 @@ export const CumulativeGraph = ({ pastResponses }: Props) => {
 
   return (
     <div className="space-y-4">
-      {/* input for chunk size */}
       <div className="flex items-center space-x-2">
         <label htmlFor="window" className="font-medium">
           Group size:
@@ -64,7 +61,6 @@ export const CumulativeGraph = ({ pastResponses }: Props) => {
         <span>day{windowSize > 1 ? "s" : ""} per bar</span>
       </div>
 
-      {/* chart */}
       <div className="h-[300px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data}>

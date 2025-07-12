@@ -11,7 +11,6 @@ interface Props {
 export const PastResponsesSection = ({ pastResponses }: Props) => {
   const [visibleCount, setVisibleCount] = useState(10);
 
-  // only render up to visibleCount items
   const visibleResponses = pastResponses.slice(0, visibleCount);
 
   const handleShowMore = () => {
