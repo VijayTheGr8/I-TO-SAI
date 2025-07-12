@@ -87,7 +87,7 @@ function App() {
       answers
     };
     
-    fetch("http://localhost/api/submitDailyResponse", {
+    fetch(`${window.location.origin}/api/submitDailyResponse`, {
       method: "POST",
       credentials: "include",                 // send the JSESSIONID cookie
       headers: {
@@ -113,7 +113,7 @@ function App() {
 
   const [submittedToday, setSubmittedToday] = useState(false);
   const getAllUserDailyResponses = () => {
-    fetch("http://localhost/api/viewResponsesForUser", {
+    fetch(`${window.location.origin}/api/viewResponsesForUser`, {
       credentials: "include"
     })
     .then(res => {
@@ -144,7 +144,7 @@ function App() {
   }
 
   const getUserDetails = () => {
-    fetch("http://localhost/api/getUserDetails", {
+    fetch(`${window.location.origin}/api/getUserDetails`, {
       credentials: "include"
     })
       .then(res => {
@@ -225,7 +225,7 @@ function App() {
           <nav className="flex justify-end space-x-2">
             {user ? (
               <a
-                href="http://localhost/perform_logout"
+                href={`${window.location.origin}/perform_logout`}
                 className="px-4 py-2 bg-red-500 text-white rounded-xl font-semibold hover:bg-red-600 transition shadow-md"
               >
                 Logout
@@ -233,13 +233,13 @@ function App() {
             ) : (
               <div className="flex flex-col space-y-2 items-end">
                 <a
-                  href="http://localhost/register"
+                  href={`${window.location.origin}/register`}
                   className="text-center px-4 py-2 rounded-xl font-semibold text-white bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 transition shadow-md"
                 >
                   Sign Up
                 </a>
                 <a
-                  href="http://localhost/login"
+                  href={`${window.location.origin}/login`}
                   className="text-center px-4 py-2 rounded-xl font-semibold text-white bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 transition shadow-md"
                 >
                   Login
