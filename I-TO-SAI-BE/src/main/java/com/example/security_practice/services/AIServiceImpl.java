@@ -36,8 +36,8 @@ public class AIServiceImpl implements AIService {
     }
 
     @Override
-    public Optional<String> getATFSuggestion(String struggle, String reason) {
-        String userMessage = "struggle: "+struggle+"\nreason: "+reason;
+    public Optional<String> getATFSuggestion(String goal, String reason) {
+        String userMessage = "goal: "+goal+"\nreason: "+reason;
         return openAIChat(atfSuggestionSysPrompt, userMessage);
     }
 }

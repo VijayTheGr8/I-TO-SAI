@@ -31,10 +31,20 @@ export const statements = [
 ];
 
 
-interface User {
+export interface ATFSuggestionDetail {
+  reason: string;
+  guidance: string;
+}
+
+export interface ATFSuggestions {
+  [goal: string]: ATFSuggestionDetail[];
+}
+
+export interface User {
   username: string,
   email: string 
-  pastResponses: DayResponse[]
+  responses: DayResponse[]
+  ATFSuggestions: ATFSuggestions
 }
 
 export interface Answer {
@@ -52,6 +62,7 @@ type FailStat = { fail: string; count: number };
 function App() {
   const [user, setUser] = useState<User | null>(null);
   const [pastResponses, setPastResponses] = useState<DayResponse[]>([]);
+  const [pastATFSuggestions, setPastATFSuggestions] = useState<ATFSuggestions | null>(null)
   const [top3MostFailed, setTop3MostFailed] = useState<FailStat[]>([]);
   const [openDialogIndex, setOpenDialogIndex] = useState<number | null>(null);
   const [graphOpen, setGraphOpen] = useState(false);
@@ -71,14 +82,10 @@ function App() {
       .map(([q, c]) => ({ fail: statements[q], count: c }));
 
     setTop3MostFailed(newTop3);
-    if (submittedToday) {
-      answersMap
-    }
   }, [pastResponses]);
 
   useEffect(() => {
     getUserDetails();
-    getAllUserDailyResponses();
   }, []);
 
   const submitDailyResponse = (answers: Answer[]) => {
@@ -89,7 +96,7 @@ function App() {
     
     fetch(`${window.location.origin}/api/submitDailyResponse`, {
       method: "POST",
-      credentials: "include",                 // send the JSESSIONID cookie
+      credentials: "include",                 
       headers: {
         "Content-Type": "application/json"
       },
@@ -99,8 +106,8 @@ function App() {
       const result = await res.text();
       if (result === "success") {
         setSubmittedToday(true);
-        getAllUserDailyResponses();
-      } //trigger a rerender
+        getUserDetails();
+      }
       else if (result === "fail:resubmit") {
         alert("Failed to submit; You already submitted for today!")
       }
@@ -112,37 +119,6 @@ function App() {
   }
 
   const [submittedToday, setSubmittedToday] = useState(false);
-  const getAllUserDailyResponses = () => {
-    fetch(`${window.location.origin}/api/viewResponsesForUser`, {
-      credentials: "include"
-    })
-    .then(res => {
-      if (!res.ok) throw new Error("Submit failed");
-      return res.json() as Promise<DayResponse[]>;
-    })
-    .then((data)=> {
-      const sortedData = data
-        .sort((a, b) => a.dayIndex - b.dayIndex)
-        .map(dr => ({
-          ...dr,
-          answers: dr.answers.sort((c, d) => c.questionNumber - d.questionNumber)
-        }));
-      setPastResponses(sortedData);
-      const todayResp = sortedData.find((dr) => dr.dayIndex === dayNumber);
-      if (todayResp) {
-        setSubmittedToday(true)
-        const map: Record<number, boolean> = {};
-        todayResp.answers.forEach((ans) => {
-          map[ans.questionNumber] = ans.answer;
-        });
-        setAnswersMap(map);
-      }
-    })
-    .catch(err => {
-      console.log(err)
-    })
-  }
-
   const getUserDetails = () => {
     fetch(`${window.location.origin}/api/getUserDetails`, {
       credentials: "include"
@@ -151,8 +127,29 @@ function App() {
         if (!res.ok) throw new Error("not logged in");
         return res.json() as Promise<User>;
       })
-      .then(setUser)
+      .then((data)=>{
+        console.log("setting user to:", data)
+        setUser(data);
+        const sortedPRData: DayResponse[] = sortPastResponses(data.responses)
+        setPastResponses(sortedPRData);
+        const todayResp = sortedPRData.find((dr) => dr.dayIndex === dayNumber);
+        if (todayResp) {
+          setSubmittedToday(true)
+          const map: Record<number, boolean> = {};
+          todayResp.answers.forEach((ans) => {
+            map[ans.questionNumber] = ans.answer;
+          });
+          setCurrentDayAnswersMap(map);
+        }
+        setPastATFSuggestions(data.ATFSuggestions);
+      })
       .catch(() => setUser(null));
+  }
+
+  const sortPastResponses = (data: DayResponse[]): DayResponse[] => {
+    return data.sort((a, b) => a.dayIndex - b.dayIndex).map(dr => ({...dr,
+        answers: dr.answers.sort((c, d) => c.questionNumber - d.questionNumber)
+      }));
   }
 
   const startDate = new Date(2025, 6, 13); //month is 0 indexed, don't panic
@@ -162,19 +159,30 @@ function App() {
   console.log("today is", today, `\nday number ${dayNumber}`)
 
 
-  const [answersMap, setAnswersMap] = useState<Record<number, boolean>>({});
+  const [currentDayAnswersMap, setCurrentDayAnswersMap] = useState<Record<number, boolean>>({});
   const [slideNum, setSlideNum] = useState<number>(0);
   const handleSelect = (index: number, value: boolean) => {
-    setAnswersMap(prev => ({ ...prev, [index]: value }));
+    setCurrentDayAnswersMap(prev => ({ ...prev, [index]: value }));
   };
 
   const handleSubmit = () => {
-    const answerArr = Object.entries(answersMap).map(([qNum, ans]) => ({questionNumber: Number(qNum), answer: ans}));
-    submitDailyResponse(answerArr);
+    const currentDayAnswersArr = Object.entries(currentDayAnswersMap).map(([qNum, ans]) => ({questionNumber: Number(qNum), answer: ans}));
+    submitDailyResponse(currentDayAnswersArr);
   };
 
+  const addATFSuggestion = (goal: string, detail: ATFSuggestionDetail) => {
+    setPastATFSuggestions(prev => {
+      const suggestions: ATFSuggestions = prev ?? {};
+      const existing = suggestions[goal] ?? [];
+      return {
+        ...suggestions,
+        [goal]: [...existing, detail],
+      };
+    });
+  };
+
+
   return (
-    // <div className="relative min-h-screen flex flex-col bg-gradient-to-br from-orange-300 via-orange-50 to-yellow-300 font-sans min-w-80 overflow-x-hidden">
     <div className="relative min-h-screen flex flex-col overflow-x-hidden">
       <div className="absolute inset-0">
         <img
@@ -315,7 +323,7 @@ function App() {
                       >
                         Submitted
                       </button>
-                    ) : Object.keys(answersMap).length === questions.length ? (
+                    ) : Object.keys(currentDayAnswersMap).length === questions.length ? (
                       <button
                         onClick={handleSubmit}
                         className="
@@ -341,7 +349,7 @@ function App() {
                         onClick={() => !submittedToday && handleSelect(slideNum, true)}
                         className={`px-4 py-1 rounded-full border transition ${
                           submittedToday?"cursor-not-allowed":''} ${
-                          answersMap[slideNum] === true
+                          currentDayAnswersMap[slideNum] === true
                             ? "bg-green-500 text-white border-green-500"
                             : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-green-100"
                         }`}
@@ -353,7 +361,7 @@ function App() {
                         onClick={() => !submittedToday && handleSelect(slideNum, false)}
                         className={`px-4 py-1 rounded-full border transition ${
                           submittedToday?"cursor-not-allowed":''} ${
-                          answersMap[slideNum] === false
+                          currentDayAnswersMap[slideNum] === false
                             ? "bg-red-500 text-white border-red-500"
                             : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-red-100"
                         }`}
@@ -433,11 +441,13 @@ function App() {
                             </button>
                               {openDialogIndex === idx && (
                                 <ATFSuggestionDialog
-                                  struggle={fs.fail}
+                                  pastSuggestions={pastATFSuggestions?.[fs.fail] || []}
+                                  goal={fs.fail}
                                   open={true}
                                   onOpenChange={(open) => {
                                     if (!open) setOpenDialogIndex(null);
-                              }}
+                                  }}
+                                  updateATFResponses={addATFSuggestion}
                               />
                             )}
                           </li>

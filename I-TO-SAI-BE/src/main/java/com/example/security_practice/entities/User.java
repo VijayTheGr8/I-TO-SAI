@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Map;
 import java.util.Set;
 
 @Entity
@@ -36,4 +37,9 @@ public class User {
         mappedBy = "user",
         cascade = CascadeType.ALL)
     private Set<DayResponse> responses;
+
+    @OneToMany(
+        mappedBy = "user",
+        cascade = CascadeType.ALL)
+    private Set<ATFSuggestion> atfSuggestions;
 }
