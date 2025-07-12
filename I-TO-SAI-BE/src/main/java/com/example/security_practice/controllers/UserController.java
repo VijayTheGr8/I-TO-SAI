@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,7 +46,6 @@ public class UserController {
 
         if (dayResponseRepo.findByUserAndDayIndex(user, dto.dayIndex()).isPresent()) {
             return ResponseEntity.badRequest().body("fail:resubmit");
-            //throw exception, as user should not be able to resubmit or edit a day response
         }
         DayResponse dr = new DayResponse();
         dr.setUser(user);
@@ -61,6 +61,23 @@ public class UserController {
         dr.setDayIndex(dto.dayIndex());
 
         dayResponseRepo.save(dr);
+
+        // --- Submit to Supabase via Node API ---
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            String supabaseApiUrl = "http://localhost:4000/supabase/updateResponses"; // Adjust if needed
+
+            // Prepare payload
+            var payload = new HashMap<String, Object>();
+            payload.put("userId", user.getId().toString());
+            payload.put("responses", dto.answers());
+
+            // Send POST request
+            restTemplate.postForObject(supabaseApiUrl, payload, String.class);
+        } catch (Exception e) {
+            e.printStackTrace(); // Log error, don't fail request
+        }
+
         return ResponseEntity.ok().body("success");
     }
 

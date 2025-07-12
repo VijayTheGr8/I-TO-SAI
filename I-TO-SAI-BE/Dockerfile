@@ -11,4 +11,4 @@ RUN chmod +x /wait-for-it.sh
 
 COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["/wait-for-it.sh", "db:3306", "--timeout=30", "--strict", "--", "java","-jar","app.jar"]
+ENTRYPOINT ["/wait-for-it.sh", "db:10994", "--timeout=30", "--strict", "--", "java","-jar","app.jar"]
