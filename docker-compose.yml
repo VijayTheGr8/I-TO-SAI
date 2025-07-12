@@ -17,7 +17,7 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     ports:
-      - "3306:3306"
+      - "10994:10994"
 
   backend:
     build:
@@ -37,7 +37,7 @@ services:
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: TRACE
     depends_on:
-      - db
+      - defaultdb
 #    ports: #commented out so it's only available locally, not exposed on host
 #      - "8080:8080"
 
