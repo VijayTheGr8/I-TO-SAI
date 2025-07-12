@@ -38,7 +38,7 @@ services:
       LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: TRACE
     depends_on:
       - db
-#    ports:
+#    ports: #commented out so it's only available locally, not exposed on host
 #      - "8080:8080"
 
   frontend:
